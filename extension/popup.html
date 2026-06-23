@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>知识收集库</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>知识收集库</h1>
+        <p class="app-subtitle">把灵感沉淀成本地知识，让 AI 随时帮你复用。</p>
+        <p id="status" class="helper-status">检查文件夹连接...</p>
+      </header>
+
+      <section class="hero-strip" aria-label="知识收集库能做什么">
+        <div class="hero-copy">
+          <h2>划线 + 想法，沉淀成可调用素材</h2>
+          <p>把文章片段和你的判断保存到本地 Markdown，之后交给 Agent 做二次创作。</p>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="知识收集库">
+        <button class="tab active" type="button" data-tab-button="saved">已保存</button>
+        <button class="tab" type="button" data-tab-button="settings">设置 / Agent</button>
+      </nav>
+
+      <section class="tab-panel active" data-tab-panel="saved">
+        <section id="onboardingPanel" class="panel intro" hidden>
+          <svg class="intro-spot" viewBox="0 0 200 130" aria-hidden="true">
+            <path d="M20 92 C 50 80, 78 96, 104 84 C 124 75, 138 80, 150 74" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round" opacity="0.85"/>
+            <g transform="rotate(38 150 74)">
+              <rect x="132" y="40" width="34" height="78" rx="9" fill="#FBF4E8" stroke="var(--ink)" stroke-width="2.5"/>
+              <rect x="132" y="40" width="34" height="22" rx="9" fill="var(--ink)"/>
+              <path d="M132 108 L149 124 L166 108 Z" fill="var(--accent)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+            </g>
+            <circle cx="44" cy="44" r="3" fill="var(--accent)" opacity="0.5"/>
+            <circle cx="172" cy="30" r="4" fill="var(--accent)" opacity="0.35"/>
+          </svg>
+          <span class="intro-hand">从划下第一行开始 ✦</span>
+          <h2>还没有保存的片段</h2>
+          <p class="hint">在文章里划选有价值的一段，写下你的想法，它就会沉淀成可被 AI 复用的本地笔记。</p>
+          <ol>
+            <li>划选文章里有价值的片段</li>
+            <li>写下你的想法后保存</li>
+            <li>回到这里查看你的笔记流</li>
+          </ol>
+          <div class="intro-shortcut">⌥⇧S 试一次划词保存</div>
+        </section>
+
+        <section class="saved-stream">
+          <div class="section-head list-actions">
+            <button id="refreshClips" class="text-button" type="button">刷新</button>
+          </div>
+          <div id="recentClips" class="clip-list">
+            <div class="empty">保存后的片段会显示在这里。</div>
+          </div>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="settings">
+        <section class="panel data-safe">
+          <h2>知识库文件夹</h2>
+          <p class="hint">选一个本地文件夹来保存知识。内容都写在这个文件夹里，<strong>清浏览器缓存不会丢失</strong>，可自行备份或同步到 iCloud / Dropbox / Git。建议选 <code class="inline-code">~/KnowledgeClips</code> 或任意文档文件夹。</p>
+
+          <div id="folderConnected" hidden>
+            <code id="folderName">—</code>
+            <div class="agent-actions">
+              <button id="changeFolder" type="button">更换文件夹</button>
+            </div>
+          </div>
+
+          <div id="folderDisconnected" hidden>
+            <button id="pickFolder" class="solid-button" type="button">选择知识库文件夹</button>
+          </div>
+
+          <div id="folderNeedsPermission" hidden>
+            <p class="hint">浏览器重启后需要重新授权一次，授权后暂存内容会自动写入。</p>
+            <button id="reconnectFolder" class="solid-button" type="button">重新连接文件夹</button>
+          </div>
+
+          <p id="queueHint" class="hint" hidden></p>
+        </section>
+
+        <section class="panel settings">
+          <h2>设置</h2>
+          <label class="setting-row">
+            <span class="setting-control">
+              <input id="autoPromptEnabled" type="checkbox" />
+              <span>划词后自动弹出保存框</span>
+            </span>
+            <small>开启后，选中文字会自动出现保存框；关闭后，只用按钮或快捷键保存，阅读时更安静。改动即时生效。</small>
+          </label>
+        </section>
+
+        <section class="panel">
+          <h2>连接到 Agent</h2>
+          <p class="hint">把本地 Markdown 知识库作为素材交给 Codex、Claude Code、Kimi Agent、WorkBuddy 等 agent，不在插件里重复造 AI。</p>
+          <label class="setting-row">
+            <span>知识库绝对路径（可选，填一次）</span>
+            <small>浏览器拿不到所选文件夹的系统路径。在这里填一次，「复制 Agent 提示」就会自动补全路径，提示开箱即用。仅用于生成提示，不影响保存。</small>
+            <input id="libraryDirPath" type="text" placeholder="例如 /Users/你/Library/.../知识收集库" autocomplete="off" spellcheck="false" />
+          </label>
+          <div class="agent-actions">
+            <button id="copyAgentPrompt" type="button">复制 Agent 提示</button>
+          </div>
+        </section>
+      </section>
+    </main>
+    <div id="deleteDialog" class="delete-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+      <div class="delete-card">
+        <h2 id="deleteTitle">删除这条笔记？</h2>
+        <p>删除后会从本地索引和 Markdown 文件中移除，无法恢复。</p>
+        <div id="deletePreview" class="delete-preview"></div>
+        <div class="editor-actions">
+          <button id="cancelDelete" type="button">取消</button>
+          <button id="confirmDelete" class="danger-button" type="button">确认删除</button>
+        </div>
+        <p id="deleteStatus" class="edit-status"></p>
+      </div>
+    </div>
+    <div id="toast" class="toast" hidden></div>
+    <script src="clip-format.js"></script>
+    <script src="handle-store.js"></script>
+    <script src="fsstore.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

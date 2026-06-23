@@ -1,0 +1,23 @@
+{
+  "name": "knowledge-clips",
+  "version": "0.1.0",
+  "description": "A tiny browser-to-Markdown personal knowledge capture tool.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stephenfan80/knowledge-clips.git"
+  },
+  "main": "server/helper.js",
+  "scripts": {
+    "start": "node server/helper.js",
+    "search": "node server/search.js",
+    "export:agent": "node server/export-agent-context.js",
+    "index": "node server/build-index.js",
+    "card": "node server/card.js",
+    "test": "node --test test/*.test.js",
+    "check": "node --check server/helper.js && node --check server/store.js && node --check server/search.js && node --check server/export-agent-context.js && node --check server/build-index.js && node --check server/card.js && node --check extension/clip-format.js && node --check extension/handle-store.js && node --check extension/fsstore.js && node --check extension/offscreen.js && node --check extension/background.js && node --check extension/content.js && node --check extension/popup.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

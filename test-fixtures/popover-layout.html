@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Knowledge Clips Popover Layout Fixture</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.8;
+      }
+
+      main {
+        width: min(760px, calc(100vw - 48px));
+        margin: 40px auto 720px;
+      }
+
+      .bottom-target {
+        margin-top: 520px;
+        color: #d22323;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>浮层布局验证</h1>
+      <p>这只是本地布局验证页。加载扩展后，选中页面底部这段红色文字，确认保存浮层不会被浏览器底部裁掉。</p>
+      <p class="bottom-target">
+        选中这段靠近窗口底部的文字，保存浮层应该优先放到上方；如果窗口很矮，浮层内部应该滚动，保存按钮仍然可见。
+      </p>
+    </main>
+  </body>
+</html>

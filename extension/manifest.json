@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "知识收集库",
+  "version": "0.1.0",
+  "description": "把文章片段和你的想法保存到本地 Markdown 知识库。",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1XMYAF5Hqj9MFktlIlWz7OvKXALBadohWa+VXilJn5uc8M5T36w0UhDSA54vjednE6KIC3k4bMQvBIUEZvzGYQXDyBIWdskJrUJtjB6m2ICMmW1tnZ466qrZmWeI91tm4eVNPezehr+KjseH7T17e8ypeyWDfRRU7GP/bgx1oALv8uVQeDT/+8umA3LGjrHLMXknP+ss5m8ClWdIbWfpuFYLb6B2ieQBGa+eocFZ5Dn8sL0UrsjPQMmSqQkl42nTxN04kHlgfHMgFsesXT2WdaKfRcbvjc/DZywvTH0MLgjtCCFg/GR3q4dP3ElRUjvRkaFvZhXbFNF19bZwFrz9mwIDAQAB",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting", "tabs", "sidePanel", "offscreen"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "action": {
+    "default_title": "打开知识收集库",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "save-selection": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "保存选中文字到知识收集库"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
