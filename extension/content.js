@@ -391,7 +391,7 @@ function renderPopover(selection, options) {
   return `
     <style>
       :host { all: initial; }
-      /* 荧光手账：浅色为默认，.kc-dark 覆盖为深色（自适应深色页面） */
+      /* 荧光手帐：浅色为默认，.kc-dark 覆盖为深色（自适应深色页面） */
       .kc-box {
         --kc-bg: #FFFDF9;
         --kc-sunken: #F7F1E8;
@@ -637,7 +637,7 @@ function renderPopover(selection, options) {
     <div class="kc-box${options.dark ? " kc-dark" : ""}">
       <div class="kc-head">
         <div>
-          <div class="kc-title">保存到知识收集库<svg class="kc-wave" viewBox="0 0 118 8" preserveAspectRatio="none" aria-hidden="true"><path d="M2 5 Q 16 1 32 4.5 T 64 5 T 96 4 T 116 5.5" fill="none" stroke="var(--kc-accent)" stroke-width="2.4" stroke-linecap="round"/></svg></div>
+          <div class="kc-title">保存到荧光手帐<svg class="kc-wave" viewBox="0 0 118 8" preserveAspectRatio="none" aria-hidden="true"><path d="M2 5 Q 16 1 32 4.5 T 64 5 T 96 4 T 116 5.5" fill="none" stroke="var(--kc-accent)" stroke-width="2.4" stroke-linecap="round"/></svg></div>
           <div class="kc-hint">${escapeHtml(hint)}</div>
         </div>
         <button class="kc-close" type="button" data-close aria-label="关闭">×</button>

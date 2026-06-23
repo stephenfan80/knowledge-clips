@@ -3,25 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>知识收集库</title>
+    <title>荧光手帐</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <main>
       <header>
-        <h1>知识收集库</h1>
+        <h1>荧光手帐</h1>
         <p class="app-subtitle">把灵感沉淀成本地知识，让 AI 随时帮你复用。</p>
         <p id="status" class="helper-status">检查文件夹连接...</p>
       </header>
 
-      <section class="hero-strip" aria-label="知识收集库能做什么">
+      <section class="hero-strip" aria-label="荧光手帐能做什么">
         <div class="hero-copy">
           <h2>划线 + 想法，沉淀成可调用素材</h2>
           <p>把文章片段和你的判断保存到本地 Markdown，之后交给 Agent 做二次创作。</p>
         </div>
       </section>
 
-      <nav class="tabs" aria-label="知识收集库">
+      <nav class="tabs" aria-label="荧光手帐">
         <button class="tab active" type="button" data-tab-button="saved">已保存</button>
         <button class="tab" type="button" data-tab-button="settings">设置 / Agent</button>
       </nav>
@@ -100,7 +100,7 @@
           <label class="setting-row">
             <span>知识库绝对路径（可选，填一次）</span>
             <small>浏览器拿不到所选文件夹的系统路径。在这里填一次，「复制 Agent 提示」就会自动补全路径，提示开箱即用。仅用于生成提示，不影响保存。</small>
-            <input id="libraryDirPath" type="text" placeholder="例如 /Users/你/Library/.../知识收集库" autocomplete="off" spellcheck="false" />
+            <input id="libraryDirPath" type="text" placeholder="例如 /Users/你/Documents/荧光手帐" autocomplete="off" spellcheck="false" />
           </label>
           <div class="agent-actions">
             <button id="copyAgentPrompt" type="button">复制 Agent 提示</button>

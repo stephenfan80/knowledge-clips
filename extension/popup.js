@@ -238,7 +238,7 @@ function renderClips(clips) {
   onboardingPanel.hidden = clips.length > 0;
 
   if (!clips.length) {
-    recentClips.innerHTML = ""; // 空态由 #onboardingPanel（荧光手账新手引导）承担
+    recentClips.innerHTML = ""; // 空态由 #onboardingPanel（荧光手帐新手引导）承担
     return;
   }
 
@@ -405,7 +405,7 @@ function renderTags(tags) {
 }
 
 function agentPrompt() {
-  const folderName = dirHandle && dirHandle.name ? dirHandle.name : "知识收集库";
+  const folderName = dirHandle && dirHandle.name ? dirHandle.name : "荧光手帐";
   const pathForCmd = libraryDirPath || "<绝对路径>";
   const pathLine = libraryDirPath
     ? `它的绝对路径：${libraryDirPath}`
