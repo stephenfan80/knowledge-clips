@@ -120,7 +120,7 @@ function setConnectionState(state) {
   const map = {
     connected: { text: "已连接文件夹", online: true },
     connecting: { text: "正在连接上次文件夹", online: false },
-    "needs-permission": { text: "已记住文件夹，待确认权限", online: false },
+    "needs-permission": { text: "需要确认上次文件夹", online: false },
     "not-selected": { text: "未选择文件夹", online: false }
   };
   const meta = map[state];
@@ -240,12 +240,37 @@ async function loadRecentClips() {
 function renderDisconnectedList() {
   document.body.classList.remove("has-clips");
   onboardingPanel.hidden = true;
-  const messages = {
-    connecting: "正在连接上次选择的知识库文件夹...",
-    "needs-permission": "已记住上次选择的知识库文件夹。若浏览器要求确认，打开「设置 / Agent」点一次确认即可，不需要重新选择。",
-    "not-selected": "先到「设置 / Agent」选择一个知识库文件夹，划线才能保存与查看。"
+  const prompts = {
+    connecting: {
+      message: "正在连接上次选择的知识库文件夹..."
+    },
+    "needs-permission": {
+      message: "已记住上次选择的知识库文件夹。点一下继续使用；浏览器确认后会自动恢复，不需要重新选择。",
+      action: "继续使用上次文件夹",
+      actionAttr: "data-reconnect-folder"
+    },
+    "not-selected": {
+      message: "还没有可用的知识库文件夹。先选择一个本地文件夹，之后打开侧边栏会优先自动恢复它。",
+      action: "选择知识库文件夹",
+      actionAttr: "data-pick-folder"
+    }
   };
-  recentClips.innerHTML = `<div class="empty">${messages[connectionState] || messages["not-selected"]}</div>`;
+  const prompt = prompts[connectionState] || prompts["not-selected"];
+  recentClips.innerHTML = `
+    <div class="empty connection-empty">
+      <p>${prompt.message}</p>
+      ${prompt.action ? `<button class="solid-button" type="button" ${prompt.actionAttr}>${prompt.action}</button>` : ""}
+    </div>
+  `;
+  bindDisconnectedActions();
+}
+
+function bindDisconnectedActions() {
+  const reconnectButton = recentClips.querySelector("[data-reconnect-folder]");
+  if (reconnectButton) reconnectButton.addEventListener("click", reconnectFolder);
+
+  const pickButton = recentClips.querySelector("[data-pick-folder]");
+  if (pickButton) pickButton.addEventListener("click", pickFolder);
 }
 
 function renderClips(clips) {
