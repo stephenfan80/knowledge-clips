@@ -935,11 +935,11 @@ function showToast(message) {
 
 function saveErrorText(error) {
   if (error === "missing_thought") return "先写一句你的想法，再保存。";
-  if (error === "forbidden") return "浏览器暂时没有文件夹权限，请在侧边栏重新连接知识库文件夹。";
+  if (error === "forbidden") return "浏览器暂时没有文件夹权限，请打开侧边栏确认知识库文件夹。";
   if (error === "save_timeout") return "保存超时，请打开侧边栏确认知识库文件夹已连接。";
   if (error && error.includes("Extension context invalidated")) return "扩展刚更新过，请刷新当前文章页后再试。";
   if (error && error.includes("Receiving end does not exist")) return "当前页面需要刷新后才能连接扩展。";
-  if (error && error.includes("Failed to fetch")) return "保存链路暂时不可用，请刷新页面并重新连接知识库文件夹。";
+  if (error && error.includes("Failed to fetch")) return "保存链路暂时不可用，请刷新页面并打开侧边栏确认知识库文件夹。";
   return `保存失败：${error || "未知错误"}`;
 }
 

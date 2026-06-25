@@ -22,7 +22,7 @@ const folderName = document.querySelector("#folderName");
 const queueHint = document.querySelector("#queueHint");
 
 let dirHandle = null;
-let connectionState = "not-selected"; // not-selected | needs-permission | connected
+let connectionState = "not-selected"; // not-selected | connecting | needs-permission | connected
 let currentClips = [];
 let pendingDeleteId = "";
 let libraryDirPath = ""; // 仅用于补全 Agent 提示（FSA 拿不到系统路径，用户填一次）
@@ -50,7 +50,7 @@ async function init() {
   } catch (error) {
     dirHandle = null;
   }
-  await refreshConnection();
+  await refreshConnection({ requestPermission: true });
 }
 
 autoPromptEnabled.addEventListener("change", () => {
@@ -80,7 +80,7 @@ window.addEventListener("focus", () => {
   if (connectionState === "connected") {
     flushQueue().then(loadRecentClips);
   } else {
-    refreshConnection();
+    refreshConnection({ requestPermission: true });
   }
 });
 
@@ -94,15 +94,14 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 // ---- 文件夹连接 ----
-async function refreshConnection() {
+async function refreshConnection({ requestPermission = false } = {}) {
   if (!dirHandle) {
     setConnectionState("not-selected");
   } else {
-    let permission = "prompt";
-    try {
-      permission = await dirHandle.queryPermission({ mode: "readwrite" });
-    } catch (error) {
-      permission = "prompt";
+    let permission = await queryDirPermission();
+    if (permission !== "granted" && requestPermission) {
+      setConnectionState("connecting");
+      permission = await requestDirPermission();
     }
     setConnectionState(permission === "granted" ? "connected" : "needs-permission");
   }
@@ -120,7 +119,8 @@ function setConnectionState(state) {
   connectionState = state;
   const map = {
     connected: { text: "已连接文件夹", online: true },
-    "needs-permission": { text: "需重新连接文件夹", online: false },
+    connecting: { text: "正在连接上次文件夹", online: false },
+    "needs-permission": { text: "已记住文件夹，待确认权限", online: false },
     "not-selected": { text: "未选择文件夹", online: false }
   };
   const meta = map[state];
@@ -132,6 +132,22 @@ function setConnectionState(state) {
   folderDisconnected.hidden = state !== "not-selected";
   folderNeedsPermission.hidden = state !== "needs-permission";
   if (state === "connected" && dirHandle) folderName.textContent = dirHandle.name;
+}
+
+async function queryDirPermission() {
+  try {
+    return await dirHandle.queryPermission({ mode: "readwrite" });
+  } catch (error) {
+    return "prompt";
+  }
+}
+
+async function requestDirPermission() {
+  try {
+    return await dirHandle.requestPermission({ mode: "readwrite" });
+  } catch (error) {
+    return "prompt";
+  }
 }
 
 async function pickFolder() {
@@ -155,19 +171,15 @@ async function reconnectFolder() {
     pickFolder();
     return;
   }
-  try {
-    const permission = await dirHandle.requestPermission({ mode: "readwrite" });
-    if (permission === "granted") {
-      setConnectionState("connected");
-      await flushQueue();
-      await loadRecentClips();
-      await updateQueueHint();
-      showToast("已重新连接");
-    } else {
-      showToast("未授权，无法写入");
-    }
-  } catch (error) {
-    showToast("重新连接失败");
+  const permission = await requestDirPermission();
+  if (permission === "granted") {
+    setConnectionState("connected");
+    await flushQueue();
+    await loadRecentClips();
+    await updateQueueHint();
+    showToast("已连接上次文件夹");
+  } else {
+    showToast("浏览器未确认文件夹权限");
   }
 }
 
@@ -228,8 +240,12 @@ async function loadRecentClips() {
 function renderDisconnectedList() {
   document.body.classList.remove("has-clips");
   onboardingPanel.hidden = true;
-  recentClips.innerHTML =
-    '<div class="empty">先到「设置 / Agent」选择一个知识库文件夹，划线才能保存与查看。</div>';
+  const messages = {
+    connecting: "正在连接上次选择的知识库文件夹...",
+    "needs-permission": "已记住上次选择的知识库文件夹。若浏览器要求确认，打开「设置 / Agent」点一次确认即可，不需要重新选择。",
+    "not-selected": "先到「设置 / Agent」选择一个知识库文件夹，划线才能保存与查看。"
+  };
+  recentClips.innerHTML = `<div class="empty">${messages[connectionState] || messages["not-selected"]}</div>`;
 }
 
 function renderClips(clips) {
